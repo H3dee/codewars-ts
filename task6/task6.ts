@@ -19,7 +19,7 @@ function minimize(list: string[]): string[]
 function minimize(list?: string[]): string[] {
   const frequency: Set<className> = new Set()
 
-  list.forEach((currentClass, _, arr) =>
+  list && list.forEach((currentClass, _, arr) =>
     frequency.add({
       name: currentClass,
       amount: findDuplicates(arr, currentClass),
@@ -47,3 +47,4 @@ const classes: string[] = [
 ]
 
 console.log(minimize(classes));
+console.log(minimize());
