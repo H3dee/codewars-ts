@@ -20,8 +20,3 @@ export const wave = (word: string): string[] =>
         })
         .filter((subwave) => subwave)
     : [];
-
-// console.log(wave('hello'))
-// console.log(wave('codewars'))
-// console.log(wave(''))
-console.log(wave("two words"));
