@@ -14,4 +14,6 @@ ls = []
 The corresponding sums are (put together in a list): [20, 20, 19, 16, 10, 0]
  */
 
-// export const partsSum = (ls: number[]): number[] =>
+ export const partsSum = (ls: number[]): number[] =>
+   [...ls.reduce((acc, item) => {}, {sums: [], original: [...ls]}).sums]
+
