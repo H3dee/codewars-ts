@@ -1,7 +1,7 @@
 {
       "compilerOptions": {
             "module": "commonjs",
-            "lib": ["ES2015", "DOM", "ES2020", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020"],
+            "lib": ["ES2015", "DOM", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020"],
             "target": "es2015",
             "jsx": "preserve",
             "sourceMap": true,
