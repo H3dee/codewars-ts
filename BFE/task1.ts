@@ -35,23 +35,33 @@ console.log(obj.a.c.d['01']) // "BFE"
 
 */
 
-const set = <T extends object>(
-    object: T,
-    path: string[] | string,
-    value: any,
-): void => {
-    const convertedPath: string[] =
-        typeof path === 'string' ? path.split('.') : [...path];
-    const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const set = <T extends object>(object: T, path: string[] | string, value: any): void => {
+  const ref = object;
+  const convertedPath: string[] = typeof path === 'string' ? path.split('.') : [...path];
+  const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-    for (const part of path) {
-        if (!object[part]) {
-            if (hasDigit(part, digits)) object[part] = 0;
-        } else {
-            object[part] = value;
-        }
+  for (const part of convertedPath) {
+    if (!ref.hasOwnProperty(part)) {
+      const hasDigit = hasSpecifiedChar(part, digits);
+      const withBracket = hasSpecifiedChar(part, ['[', ']']);
+
+      if(hasDigit && isDigitPartValid(part, digits) && !withBracket) {
+          ref[part] = [];
+      }
     }
+    // if (!object[part]) {
+    //     if (hasDigit(part, digits)) object[part] = 0;
+    // } else {
+    //     object[part] = value;
+    // }
+  }
 };
 
-const hasDigit = (partOfPath: string, dict: string[]) =>
-    partOfPath.split('').some((char) => dict.includes(char));
+const hasSpecifiedChar = (partOfPath: string, dictionary: string[]) =>
+  partOfPath.split('').some((char) => dictionary.includes(char));
+
+const isDigitPartValid = (partOfPath: string, dictionary: string[]) => {
+    const firstChar =  parseInt(partOfPath.split('').filter((digit) => dictionary.includes(digit))[0]);
+
+    return firstChar !== 0
+}
