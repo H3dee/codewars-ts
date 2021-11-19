@@ -36,32 +36,48 @@ console.log(obj.a.c.d['01']) // "BFE"
 */
 
 const set = <T extends object>(object: T, path: string[] | string, value: any): void => {
-  const ref = object;
+  const refObject = object;
   const convertedPath: string[] = typeof path === 'string' ? path.split('.') : [...path];
   const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   for (const part of convertedPath) {
-    if (!ref.hasOwnProperty(part)) {
-      const hasDigit = hasSpecifiedChar(part, digits);
-      const withBracket = hasSpecifiedChar(part, ['[', ']']);
+    if (!refObject.hasOwnProperty(part)) {
+      const hasValidDigit = hasSpecifiedChars(part, digits) && isDigitPartValid(part, digits);
+      const withBracket = hasSpecifiedChars(part, ['[', ']']);
 
-      if(hasDigit && isDigitPartValid(part, digits) && !withBracket) {
-          ref[part] = [];
+      if (hasValidDigit) {
+        const length = withBracket ? extractSpecifiedChars(part, digits) + 1 : parseInt(part) + 1;
+
+        refObject[part] = Array.from({ length }, (_, i) =>
+          i === parseInt(part) ? part : undefined,
+        );
+      } else if (hasSpecifiedChars(part, digits) && !isDigitPartValid(part, digits)) {
+        refObject[part] = 0;
+      } else {
+        const isLastElement =
+          convertedPath.findIndex((element) => element === part) === convertedPath.length - 1;
+
+        refObject[part] = isLastElement ? value : {};
       }
     }
-    // if (!object[part]) {
-    //     if (hasDigit(part, digits)) object[part] = 0;
-    // } else {
-    //     object[part] = value;
-    // }
   }
 };
 
-const hasSpecifiedChar = (partOfPath: string, dictionary: string[]) =>
+const hasSpecifiedChars = (partOfPath: string, dictionary: string[]): boolean =>
   partOfPath.split('').some((char) => dictionary.includes(char));
 
-const isDigitPartValid = (partOfPath: string, dictionary: string[]) => {
-    const firstChar =  parseInt(partOfPath.split('').filter((digit) => dictionary.includes(digit))[0]);
+const isDigitPartValid = (partOfPath: string, dictionary: string[]): boolean => {
+  const firstChar = parseInt(partOfPath.split('').filter((digit) => dictionary.includes(digit))[0]);
 
-    return firstChar !== 0
-}
+  return firstChar !== 0;
+};
+
+const extractSpecifiedChars = (partOfPath: string, dictionary: string[]): number => {
+  const matchings = partOfPath.split('').filter((char) => dictionary.includes(char));
+
+  return parseInt(matchings.join());
+};
+
+const obj: any = {};
+set(obj, 'a.b.c', 'BFE');
+console.log(obj); // "BFE"
