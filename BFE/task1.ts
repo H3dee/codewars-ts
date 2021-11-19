@@ -35,24 +35,28 @@ console.log(obj.a.c.d['01']) // "BFE"
 
 */
 
-const set = <T extends object>(object: T, path: string[] | string, value: any): void => {
-  const refObject = object;
+const set = (object: {[key: string]: any}, path: string[] | string, value: any): void => {
+  let refObject = object;
+  const entries = Object.entries(object);
   const convertedPath: string[] = typeof path === 'string' ? path.split('.') : [...path];
   const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   for (const part of convertedPath) {
-    if (!refObject.hasOwnProperty(part)) {
+    const doesPropExist = entries.some((entry) => entry[0] === part);
+
+    if (!doesPropExist) {
       const hasValidDigit = hasSpecifiedChars(part, digits) && isDigitPartValid(part, digits);
       const withBracket = hasSpecifiedChars(part, ['[', ']']);
 
       if (hasValidDigit) {
         const length = withBracket ? extractSpecifiedChars(part, digits) + 1 : parseInt(part) + 1;
 
-        refObject[part] = Array.from({ length }, (_, i) =>
-          i === parseInt(part) ? part : undefined,
-        );
+        const key = withBracket ? part[0] : part
+        const totalValue = Array.from({ length }, (_, i) => (i === parseInt(part) ? value : undefined));
+
+        entries.push([key, totalValue]);
       } else if (hasSpecifiedChars(part, digits) && !isDigitPartValid(part, digits)) {
-        refObject[part] = 0;
+        entries.push([part, value]);
       } else {
         const isLastElement =
           convertedPath.findIndex((element) => element === part) === convertedPath.length - 1;
@@ -61,6 +65,8 @@ const set = <T extends object>(object: T, path: string[] | string, value: any): 
       }
     }
   }
+
+  refObject = Object.fromEntries(entries)
 };
 
 const hasSpecifiedChars = (partOfPath: string, dictionary: string[]): boolean =>
