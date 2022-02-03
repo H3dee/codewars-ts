@@ -9,16 +9,29 @@ Courtesy of projecteuler.net
  */
 
 export class Challenge {
-    private static multiplicators: number[] = [];
+  private static multiplicators: number[] = [];
 
-    static solution(number: number): number {
-        if(number < 0) return 0;  
-      
-        for (let i = 0; i < number; i++)
-            if (i % 5 === 0 || i % 3 === 0) this.multiplicators.push(i);
+  static solution(number: number): number {
+    if (number < 0) {
+        return 0;
+    };
 
-        return this.multiplicators.reduce((acc, num) => (acc += num), 0);
+
+    for (let i = 0; i < number; i++) {
+      if (i % 5 === 0 || i % 3 === 0) {
+        this.multiplicators.push(i);
+      }
     }
+
+    console.log(this.multiplicators);
+
+    const sumOfMultiplicators = this.multiplicators.reduce(
+      (acc, multiplicator) => acc + multiplicator,
+      0,
+    );
+
+    return sumOfMultiplicators;
+  }
 }
 
-console.log(Challenge.solution(10));
+console.log(Challenge.solution(101));
